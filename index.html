@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mongo</title>
+</head>
+<body>
+    <h1>look , this is a mongo database</h1>
+    <form action="/addUser" method="post">
+        <input type="text" placeholder="Name" name="user"><br/>
+        <input type="number" placeholder="age" name="age"><br/>
+        <input type="submit" value="Submit">
+
+
+    </form>
+    <div id="list"></div>
+    <div id="update"></div>
+
+    <script>
+
+        const deleteUser = (event,id) => {
+            console.log(event.target.parentNode);
+            fetch(`/delete/${id}`,{
+                method: 'DELETE'
+            }).then(res=>res.json())
+            .then(data=>{
+                if(data){
+                event.target.parentNode.style.display = 'none';
+            }
+            })
+        }
+        const updateUser = (id) => {
+            const userName = document.getElementById('updatedUser').value;
+            const userAge = document.getElementById('updatedAge').value;
+            const user = {id,userName,userAge};
+            fetch(`/update/${user.id}`,{
+                method: 'PATCH',
+                headers: {
+                'Content-type': 'application/json',
+                    },
+                body: JSON.stringify(user)
+            }).then(res=>res.json()).then(data=>{
+                if(data){
+                    loadAllUser();
+                    const update = document.getElementById('update');
+                    update.innerHTML="";
+                }
+            });
+        }
+        const loadUser =(id)=>{
+            fetch(`/user/${id}`).then(res=>res.json()).then(data=>{
+                const update = document.getElementById('update');
+                update.innerHTML = `
+                <h3>update: ${data._id}</h3>
+                user: <input type="text" name:'user' id='updatedUser' value="${data.user}"/><br/>
+                age <input type="number" name:'age' id='updatedAge' value="${data.age}"/><br/>
+                <button onclick="updateUser('${data._id}')">update</button>
+                `;
+            })
+        }
+
+        const loadAllUser = () =>{
+            fetch('http://localhost:3000/users').then(res=>res.json()).then(data=>{
+                container = document.getElementById('list');
+                container.innerHTML ='';
+                data.forEach(da=>{
+                    const p = document.createElement('p');
+                    // console.log(da)
+                    // const userId = da._id;
+                    p.innerHTML = ` <b>${da.user}</b> -- ${da.age} 
+                    <button onclick="loadUser('${da._id}')">update</button>
+                    <button onclick="deleteUser(event, '${da._id}')">delete</button>`;
+                    container.appendChild(p);
+                })
+                
+            })
+        }
+        
+        loadAllUser();
+    </script>
+</body>
+</html>
