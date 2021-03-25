@@ -4,7 +4,7 @@ const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectId;
 const uri =
-  "mongodb+srv://admin:1995@cluster0.kni9h.mongodb.net/userdb?retryWrites=true&w=majority";
+  "mongodb+srv://user:pass@cluster0.kni9h.mongodb.net/userdb?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
